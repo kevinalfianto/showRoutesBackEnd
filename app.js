@@ -4,7 +4,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var Sequelize = require('sequelize');
 
 var index = require('./routes/index');
 var create = require('./routes/create');
@@ -28,37 +27,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/create', create);
 app.use('/delete', destroy);
-
-const sequelize = new Sequelize('postgres://hgzkizzbpxqgbj:8e4dd6538406491dc132eed304ceeb3b827af144545a58f1bc47ef5b747264ff@ec2-50-19-83-146.compute-1.amazonaws.com:5432/dcp3eq9d2lg7ju');
-
-//check wether the connection has been made
-sequelize
-    .authenticate()
-    .then(() => {
-        console.log('Connection has been established successfully.');
-     })
-    .catch(err => {
-        console.error('Unable to connect to the database:', err);
-     });
-
-//mysql database only has 1 table positions that contain attributes latitude and longitude
-const Position = sequelize.define('position', {
-    latitude: {
-        type: Sequelize.FLOAT
-    },
-    longitude: {
-        type: Sequelize.FLOAT
-    }
-});
-
-// force: true will drop the table if it already exists
-Position.sync({force: true}).then(() => {
-  // Table created
-  return Position.create({
-    latitude: -10,
-    longitude: 10
-  });
-});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
